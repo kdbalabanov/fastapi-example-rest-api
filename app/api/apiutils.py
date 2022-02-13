@@ -1,7 +1,7 @@
 import pandas
 from fastapi.encoders import jsonable_encoder
 
-from app.api.models import HistoricalData
+from app.api.db.models import HistoricalData
 from app.api.schemas import PostHistoricalDataRequest
 
 

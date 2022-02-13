@@ -5,7 +5,7 @@ import pytest
 from fastapi.encoders import jsonable_encoder
 
 from app.api import apiutils
-from app.api.models import HistoricalData
+from app.api.db.models import HistoricalData
 from app.api.schemas import CandleStickRecord, PostHistoricalDataRequest
 
 

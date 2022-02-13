@@ -1,4 +1,4 @@
-description = '''
+CUSTOM_DOCS_DESCRIPTION = '''
 Simple API made possible by FastAPI.
 
 ## Tickers
@@ -16,7 +16,7 @@ You can retrieve such data for a specific date range and ticker. Supports day ti
 You can **clear all cryptocurrency historical data and tickers**.
 '''
 
-tags_metadata = [
+CUSTOM_DOCS_TAGS_METADATA = [
     {
         'name': 'Tickers',
         'description': 'Add or retrieve cryptocurrency tickers.'

@@ -2,15 +2,15 @@ import datetime
 import logging
 from logging.config import dictConfig
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import PlainTextResponse, JSONResponse
 
 from app.api import apiutils
-from app.api import crud
-from app.api.customdocs import description, tags_metadata
-from app.api.database import engine, Base
-from app.api.models import HistoricalData
+from app.api.db import crud
+from app.api.config import CUSTOM_DOCS_DESCRIPTION, CUSTOM_DOCS_TAGS_METADATA
+from app.api.db.database import engine, Base
+from app.api.db.models import HistoricalData
 from app.api.schemas import GetHistoricalDataOutputType, PostTickerRequest, PostHistoricalDataRequest
 from app.logging.logconfig import LogConfig
 
@@ -22,8 +22,8 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     docs_url='/',
     title='Crypto Market Data Rest API',
-    description=description,
-    openapi_tags=tags_metadata
+    description=CUSTOM_DOCS_DESCRIPTION,
+    openapi_tags=CUSTOM_DOCS_TAGS_METADATA
 )
 
 
@@ -43,7 +43,7 @@ def get_ticker(ticker_name: str):
 
     message_ticker_missing = f'Ticker {ticker_name} does not exist.'
     logger.error(message_ticker_missing)
-    raise HTTPException(status_code=404, detail=message_ticker_missing)
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_ticker_missing)
 
 
 @app.get('/historical/get/', tags=['Historical Data'])
@@ -83,11 +83,11 @@ def get_historical(
 
         message_no_records_found = f'No {ticker_name} records found for the following date range: {start} - {end}'
         logger.error(message_no_records_found)
-        raise HTTPException(status_code=404, detail=message_no_records_found)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_no_records_found)
 
     message_missing_ticker = f'Ticker {ticker_name} does not exist.'
     logger.error(message_missing_ticker)
-    raise HTTPException(status_code=404, detail=message_missing_ticker)
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_missing_ticker)
 
 
 @app.post('/ticker/add/', tags=['Tickers'])
@@ -108,7 +108,7 @@ def add_ticker(ticker_request: PostTickerRequest):
 
     message_ticker_exists = f'Ticker {ticker_request.ticker_name} already exists.'
     logger.error(message_ticker_exists)
-    raise HTTPException(status_code=400, detail=message_ticker_exists)
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message_ticker_exists)
 
 
 @app.post('/historical/add/', tags=['Historical Data'])
@@ -136,7 +136,7 @@ def add_historical(post_historical_request: PostHistoricalDataRequest):
     message_missing_ticker = f'Ticker {post_historical_request.ticker_name} ' \
                              f'does not exist - the historical data could not be added.'
     logger.error(message_missing_ticker)
-    raise HTTPException(status_code=404, detail=message_missing_ticker)
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_missing_ticker)
 
 
 @app.delete('/records/remove/all', tags=['Database'])

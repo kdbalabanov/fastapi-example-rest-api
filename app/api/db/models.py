@@ -1,7 +1,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, Numeric, String, Date
 from sqlalchemy.orm import relationship
 
-from app.api.database import Base
+from app.api.db.database import Base
 
 
 class Ticker(Base):

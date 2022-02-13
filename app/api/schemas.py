@@ -28,7 +28,7 @@ class CandleStickRecord(BaseModel):
 
 class PostTickerRequest(BaseModel):
     """
-    Pydantic model which defines the acceptable format of data in the case of POST requests when sending new ticker_name
+    Pydantic model which defines the acceptable format of data in the case of POST requests when sending new ticker
     that is to be written to the database
     """
     ticker_name: str

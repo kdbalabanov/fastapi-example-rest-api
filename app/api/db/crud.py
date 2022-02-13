@@ -1,7 +1,7 @@
 from datetime import date
 
-from app.api.database import SessionLocal
-from app.api.models import Ticker, HistoricalData
+from app.api.db.database import SessionLocal
+from app.api.db.models import Ticker, HistoricalData
 
 db = SessionLocal()
 
