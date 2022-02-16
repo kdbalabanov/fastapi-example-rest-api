@@ -30,3 +30,7 @@ CUSTOM_DOCS_TAGS_METADATA = [
         'description': 'Clear all historical data and tickers.'
     }
 ]
+
+API_HISTORICAL_ENDPOINT = '/historical/'
+API_TICKERS_ENDPOINT = '/tickers/'
+API_CLEAR_ENDPOINT = '/clear/'

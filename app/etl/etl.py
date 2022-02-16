@@ -5,15 +5,11 @@ from logging.config import dictConfig
 import pandas
 import requests
 
+from app.etl.config import CUSTOM_API_BASE_URL, CUSTOM_API_HISTORICAL_ENDPOINT, CUSTOM_API_TICKERS_ENDPOINT
 from app.logging.logconfig import LogConfig
 
 dictConfig(LogConfig().dict())
 logger = logging.getLogger("logger")
-
-CUSTOM_API_BASE_URL = 'http://127.0.0.1:8000'
-CUSTOM_API_ADD_TICKER_ENDPOINT = '/ticker/add/'
-CUSTOM_API_GET_HISTORICAL_ENDPOINT = '/historical/get/'
-CUSTOM_API_ADD_HISTORICAL_ENDPOINT = '/historical/add/'
 
 
 def log_api_response(status_code: int, source: str, response_data: str):
@@ -70,7 +66,7 @@ def api_get_historical(ticker: str, start: date, end: date, data_format: str):
     :param end: The end date
     :param data_format: The data format that we expect: can be either json or csv
     """
-    url = CUSTOM_API_BASE_URL + CUSTOM_API_GET_HISTORICAL_ENDPOINT
+    url = CUSTOM_API_BASE_URL + CUSTOM_API_HISTORICAL_ENDPOINT
     response = requests.request('GET', url, params={
         'ticker_name': ticker, 'start': start.isoformat(), 'end': end.isoformat(), 'data_format': data_format,
     })
@@ -87,7 +83,7 @@ def api_post_ticker(ticker: str):
 
     :param ticker: Cryptocurrency ticker (example BTC-USD)
     """
-    url = CUSTOM_API_BASE_URL + CUSTOM_API_ADD_TICKER_ENDPOINT
+    url = CUSTOM_API_BASE_URL + CUSTOM_API_TICKERS_ENDPOINT
     response = requests.request('POST', url, json={'ticker_name': ticker})
     log_api_response(status_code=response.status_code, source=url, response_data=response.json())
 
@@ -100,7 +96,7 @@ def api_post_historical(ticker: str, df: pandas.DataFrame):
     :param ticker: Cryptocurrency ticker (example BTC-USD)
     :param df: Timeseries data associated with ticker
     """
-    url = CUSTOM_API_BASE_URL + CUSTOM_API_ADD_HISTORICAL_ENDPOINT
+    url = CUSTOM_API_BASE_URL + CUSTOM_API_HISTORICAL_ENDPOINT
     response = requests.request(
         'POST', url, json={'ticker_name': ticker, 'candlestick_records': df.to_dict(orient='records')}
     )

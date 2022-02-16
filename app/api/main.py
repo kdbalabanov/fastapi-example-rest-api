@@ -7,8 +7,9 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import PlainTextResponse, JSONResponse
 
 from app.api import apiutils
+from app.api.config import CUSTOM_DOCS_DESCRIPTION, CUSTOM_DOCS_TAGS_METADATA, API_HISTORICAL_ENDPOINT, \
+    API_TICKERS_ENDPOINT, API_CLEAR_ENDPOINT
 from app.api.db import crud
-from app.api.config import CUSTOM_DOCS_DESCRIPTION, CUSTOM_DOCS_TAGS_METADATA
 from app.api.db.database import engine, Base
 from app.api.db.models import HistoricalData
 from app.api.schemas import GetHistoricalDataOutputType, PostTickerRequest, PostHistoricalDataRequest
@@ -27,7 +28,7 @@ app = FastAPI(
 )
 
 
-@app.get('/ticker/get/', tags=['Tickers'])
+@app.get(API_TICKERS_ENDPOINT, tags=['Tickers'])
 def get_ticker(ticker_name: str):
     """
     FastAPI endpoint for getting a cryptocurrency ticker_name if it exists
@@ -46,7 +47,7 @@ def get_ticker(ticker_name: str):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_ticker_missing)
 
 
-@app.get('/historical/get/', tags=['Historical Data'])
+@app.get(API_HISTORICAL_ENDPOINT, tags=['Historical Data'])
 def get_historical(
         ticker_name: str,
         data_format: GetHistoricalDataOutputType,
@@ -90,7 +91,7 @@ def get_historical(
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_missing_ticker)
 
 
-@app.post('/ticker/add/', tags=['Tickers'])
+@app.post(API_TICKERS_ENDPOINT, tags=['Tickers'])
 def add_ticker(ticker_request: PostTickerRequest):
     """
     FastAPI endpoint for adding a ticker_name, given a string to represent it
@@ -111,7 +112,7 @@ def add_ticker(ticker_request: PostTickerRequest):
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message_ticker_exists)
 
 
-@app.post('/historical/add/', tags=['Historical Data'])
+@app.post(API_HISTORICAL_ENDPOINT, tags=['Historical Data'])
 def add_historical(post_historical_request: PostHistoricalDataRequest):
     """
     FastAPI endpoint for adding historical data given a ticker_name and data associated with it
@@ -139,7 +140,7 @@ def add_historical(post_historical_request: PostHistoricalDataRequest):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_missing_ticker)
 
 
-@app.delete('/records/remove/all', tags=['Database'])
+@app.delete(API_CLEAR_ENDPOINT, tags=['Database'])
 def remove_all_records():
     """
     FastAPI endpoint for clearing all records in the tickers and historical database tables
