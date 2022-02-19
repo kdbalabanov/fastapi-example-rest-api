@@ -2,7 +2,7 @@ from datetime import date
 
 import pandas
 
-from app.etl import etl
+from app.etl import transform
 
 
 def test_transform_response_data():
@@ -26,5 +26,5 @@ def test_transform_response_data():
 
     result_df = pandas.DataFrame(input_data, columns=input_columns)
     expected_df = pandas.DataFrame(expected_data, columns=expected_columns)
-    etl.transform_coinbase_data(result_df)
+    transform.transform_coinbase_data(result_df)
     pandas.testing.assert_frame_equal(expected_df, result_df)
