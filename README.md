@@ -48,7 +48,7 @@ functionalities make it incredibly convenient. The built-in UI docs element allo
 testing the API directly from the browser. You can read more here: https://fastapi.tiangolo.com/features/
 
 
-You can then run the app/etl/etl.py script.
+You can then run the app/etl/main.py script.
 
 This script will populate the SQLite database with some historical data for "BTC-USD" by communicating with the API.
 The script pulls BTC-USD data from the Coinbase API for the date range 1.9.2021 - 31.10.2021 (for demo purposes), after which it sends a POST request to the custom API to store that data.
@@ -69,9 +69,9 @@ If you want to, you should be able to access the FastAPI API (which runs in the 
 http://127.0.0.1:8000
 ```
 
-You can then run the app/etl/etl.py script by running the command:
+You can then run the app/etl/main.py script by running the command:
 ```
-python app/etl/etl.py
+python app/etl/main.py
 ```
 
 This script will populate the SQLite database with some historical data for "BTC-USD" by communicating with the API.
