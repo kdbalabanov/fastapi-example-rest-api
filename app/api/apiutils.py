@@ -15,7 +15,7 @@ def process_historical_records_to_df(historical_data: list[HistoricalData]) -> p
     records = [jsonable_encoder(record) for record in historical_data]
 
     return pandas.DataFrame.from_records(
-        records,
+        data=records,
         columns=[
             HistoricalData.date.name,
             HistoricalData.ticker_id.name,
@@ -36,7 +36,7 @@ def add_pct_change(df: pandas.DataFrame, column_name: str):
     :param column_name: Column name to base the computation of % change on
     """
     df['% change'] = df[column_name].pct_change() * 100
-    df.fillna(0.00, inplace=True)
+    df.fillna(value=0.00, inplace=True)
 
 
 def generate_historical_data_records(

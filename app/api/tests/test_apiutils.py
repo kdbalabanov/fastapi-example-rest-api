@@ -50,7 +50,7 @@ def test_process_historical_records_to_df(historical_data):
         [date(2021, 10, 6).isoformat(), 1, 26000.00, 36000.00, 28500.00, 33000.00, 6000.00]
     ]
 
-    result_df = apiutils.process_historical_records_to_df(historical_data)
+    result_df = apiutils.process_historical_records_to_df(historical_data=historical_data)
     expected_df = pandas.DataFrame(data=expected_data, columns=expected_columns)
     pandas.testing.assert_frame_equal(expected_df, result_df)
 
@@ -78,7 +78,7 @@ def test_add_pct_change():
     ]
 
     result_df = pandas.DataFrame(data=input_data, columns=input_columns)
-    apiutils.add_pct_change(result_df, close)
+    apiutils.add_pct_change(df=result_df, column_name=close)
     expected_df = pandas.DataFrame(data=expected_data, columns=expected_columns)
     pandas.testing.assert_frame_equal(expected_df, result_df)
 
@@ -108,4 +108,4 @@ def test_generate_historical_data_records(historical_data):
         post_historical_request=post_historical_request
     )
 
-    assert jsonable_encoder(result_historical_data) == jsonable_encoder(historical_data)
+    assert jsonable_encoder(obj=result_historical_data) == jsonable_encoder(obj=historical_data)

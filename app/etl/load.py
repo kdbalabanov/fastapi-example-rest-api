@@ -18,7 +18,7 @@ def api_get_historical(ticker: str, start: date, end: date, data_format: str):
     :param data_format: The data format that we expect: can be either json or csv
     """
     url = CUSTOM_API_BASE_URL + CUSTOM_API_HISTORICAL_ENDPOINT
-    response = requests.request('GET', url, params={
+    response = requests.request(method='GET', url=url, params={
         'ticker_name': ticker, 'start': start.isoformat(), 'end': end.isoformat(), 'data_format': data_format,
     })
     if data_format == 'json' or response.status_code != 200:
@@ -35,7 +35,7 @@ def api_post_ticker(ticker: str):
     :param ticker: Cryptocurrency ticker (example BTC-USD)
     """
     url = CUSTOM_API_BASE_URL + CUSTOM_API_TICKERS_ENDPOINT
-    response = requests.request('POST', url, json={'ticker_name': ticker})
+    response = requests.request(method='POST', url=url, json={'ticker_name': ticker})
     logger.log_api_response(status_code=response.status_code, source=url, response_data=response.json())
 
 
@@ -49,6 +49,6 @@ def api_post_historical(ticker: str, df: pandas.DataFrame):
     """
     url = CUSTOM_API_BASE_URL + CUSTOM_API_HISTORICAL_ENDPOINT
     response = requests.request(
-        'POST', url, json={'ticker_name': ticker, 'candlestick_records': df.to_dict(orient='records')}
+        method='POST', url=url, json={'ticker_name': ticker, 'candlestick_records': df.to_dict(orient='records')}
     )
     logger.log_api_response(status_code=response.status_code, source=url, response_data=response.json())

@@ -5,7 +5,7 @@ import pandas
 from app.etl import transform
 
 
-def test_transform_response_data():
+def test_transform_coinbase_data():
     input_columns = ['date', 'low', 'high', 'open', 'close', 'volume']
     input_data = [
         [1641340800, 10000.00, 10000.00, 10000.00, 10000.00, 25067.674768],
@@ -15,7 +15,6 @@ def test_transform_response_data():
         [1641686400, 30000.00, 30000.00, 30000.00, 30000.00, 11074.224982]
     ]
 
-    expected_columns = input_columns
     expected_data = [
         [date(2022, 1, 5).isoformat(), 10000.00, 10000.00, 10000.00, 10000.00, 25067.674768],
         [date(2022, 1, 6).isoformat(), 20000.00, 20000.00, 20000.00, 20000.00, 20780.047850],
@@ -24,7 +23,7 @@ def test_transform_response_data():
         [date(2022, 1, 9).isoformat(), 30000.00, 30000.00, 30000.00, 30000.00, 11074.224982]
     ]
 
-    result_df = pandas.DataFrame(input_data, columns=input_columns)
-    expected_df = pandas.DataFrame(expected_data, columns=expected_columns)
-    transform.transform_coinbase_data(result_df)
+    result_df = pandas.DataFrame(data=input_data, columns=input_columns)
+    expected_df = pandas.DataFrame(data=expected_data, columns=input_columns)
+    transform.transform_coinbase_data(historical_df=result_df)
     pandas.testing.assert_frame_equal(expected_df, result_df)

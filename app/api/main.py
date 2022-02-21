@@ -18,8 +18,6 @@ from app.logging.logconfig import LogConfig
 dictConfig(LogConfig().dict())
 logger = logging.getLogger("logger")
 Base.metadata.create_all(bind=engine)
-
-
 app = FastAPI(
     docs_url='/',
     title='Crypto Market Data Rest API',
@@ -38,21 +36,21 @@ def get_ticker(ticker_name: str):
     """
     ticker_record = crud.retrieve_ticker_by_name(ticker_name=ticker_name)
     if ticker_record:
-        ticker_json = jsonable_encoder(ticker_record)
-        logger.info(f'Ticker record {ticker_json} has been successfully retrieved.')
+        ticker_json = jsonable_encoder(obj=ticker_record)
+        logger.info(msg=f'Ticker record {ticker_json} has been successfully retrieved.')
         return JSONResponse(content=ticker_json)
 
     message_ticker_missing = f'Ticker {ticker_name} does not exist.'
-    logger.error(message_ticker_missing)
+    logger.error(msg=message_ticker_missing)
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_ticker_missing)
 
 
 @app.get(API_HISTORICAL_ENDPOINT, tags=['Historical Data'])
 def get_historical(
-        ticker_name: str,
-        data_format: GetHistoricalDataOutputType,
-        start: datetime.date,
-        end: datetime.date
+    ticker_name: str,
+    data_format: GetHistoricalDataOutputType,
+    start: datetime.date,
+    end: datetime.date
 ):
     """
     FastAPI endpoint for retrieving historical data given a ticker_name and a date range
@@ -69,8 +67,8 @@ def get_historical(
         historical_data = crud.retrieve_historical_by_date_range_and_ticker_id(
             start=start, end=end, ticker_id=ticker_record.id
         )
-        records_df = apiutils.process_historical_records_to_df(historical_data)
-        apiutils.add_pct_change(records_df, HistoricalData.close.name)
+        records_df = apiutils.process_historical_records_to_df(historical_data=historical_data)
+        apiutils.add_pct_change(df=records_df, column_name=HistoricalData.close.name)
 
         if not records_df.empty:
             logger.info(
@@ -83,11 +81,11 @@ def get_historical(
                 return JSONResponse(content=records_df.to_dict(orient='records'))
 
         message_no_records_found = f'No {ticker_name} records found for the following date range: {start} - {end}'
-        logger.error(message_no_records_found)
+        logger.error(msg=message_no_records_found)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_no_records_found)
 
     message_missing_ticker = f'Ticker {ticker_name} does not exist.'
-    logger.error(message_missing_ticker)
+    logger.error(msg=message_missing_ticker)
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_missing_ticker)
 
 
@@ -103,12 +101,12 @@ def add_ticker(ticker_request: PostTickerRequest):
     ticker_record = crud.retrieve_ticker_by_name(ticker_name=ticker_request.ticker_name)
     if not ticker_record:
         added_ticker = crud.create_ticker(ticker_name=ticker_request.ticker_name)
-        ticker_record_json = jsonable_encoder(added_ticker)
-        logger.info(f'Ticker record {ticker_record_json} has been successfully added.')
+        ticker_record_json = jsonable_encoder(obj=added_ticker)
+        logger.info(msg=f'Ticker record {ticker_record_json} has been successfully added.')
         return JSONResponse(content=ticker_record_json)
 
     message_ticker_exists = f'Ticker {ticker_request.ticker_name} already exists.'
-    logger.error(message_ticker_exists)
+    logger.error(msg=message_ticker_exists)
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message_ticker_exists)
 
 
@@ -124,10 +122,13 @@ def add_historical(post_historical_request: PostHistoricalDataRequest):
     """
     ticker_record = crud.retrieve_ticker_by_name(ticker_name=post_historical_request.ticker_name)
     if ticker_record:
-        records = apiutils.generate_historical_data_records(ticker_record.id, post_historical_request)
-        records_json = [jsonable_encoder(x) for x in records]
+        records = apiutils.generate_historical_data_records(
+            ticker_id=ticker_record.id,
+            post_historical_request=post_historical_request
+        )
+        records_json = [jsonable_encoder(obj=x) for x in records]
         crud.create_historical(records=records)
-        logger.info(f'Successfully added {len(records)} {post_historical_request.ticker_name} records.')
+        logger.info(msg=f'Successfully added {len(records)} {post_historical_request.ticker_name} records.')
         return JSONResponse(
             content={
                 'ticker_name': post_historical_request.ticker_name, 'added_records': records_json
@@ -136,7 +137,7 @@ def add_historical(post_historical_request: PostHistoricalDataRequest):
 
     message_missing_ticker = f'Ticker {post_historical_request.ticker_name} ' \
                              f'does not exist - the historical data could not be added.'
-    logger.error(message_missing_ticker)
+    logger.error(msg=message_missing_ticker)
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=message_missing_ticker)
 
 
@@ -151,7 +152,7 @@ def remove_all_records():
     removed_historical_data = crud.delete_all_historical_records()
     message_removed_records = f'Successfully removed {removed_tickers} ticker rows and {removed_historical_data} ' \
                               f'historical data rows.'
-    logger.info(message_removed_records)
+    logger.info(msg=message_removed_records)
     return JSONResponse(
         content={'removed_ticker_rows': removed_tickers, 'removed_historical_data_rows': removed_historical_data}
     )
