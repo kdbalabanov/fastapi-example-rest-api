@@ -6,7 +6,9 @@ This project extracts data from [coinbase API](https://docs.cloud.coinbase.com/e
 
 Clone this repository.
 
-## How to Run/Deploy (Local Machine - tested on Windows 10)
+## How to Run/Deploy
+
+Please note that the following instructions have been tested on Windows 10 + WSL2 + Docker Desktop.
 
 ### Prerequisites
 
@@ -15,14 +17,27 @@ Things you will need to have installed:
 Python 3.9
 ```
 
-The PyCharm IDE is recommended.
-
 ### Installing
+
+Navigate to the root of the project and execute the following command to create a virtual environment:
+```
+python3 -m venv venv
+```
+
+Activate the virtual environment:
+```
+source venv/bin/activate
+```
 
 Navigate to the root of the project and execute the following command to install the related dependencies:
 
 ```
 pip install -r requirements.txt
+```
+
+Set the PYTHONPATH to the current project directory (this needs to be done for every new terminal you open):
+```
+export PYTHONPATH=$(pwd)
 ```
 
 ### Deployment
@@ -48,7 +63,10 @@ functionalities make it incredibly convenient. The built-in UI docs element allo
 testing the API directly from the browser. You can read more here: https://fastapi.tiangolo.com/features/
 
 
-You can then run the app/etl/main.py script.
+You can then run the script to import some sample data:
+```
+python3 app/etl/main.py
+```
 
 This script will populate the SQLite database with some historical data for "BTC-USD" by communicating with the API.
 The script pulls BTC-USD data from the Coinbase API for the date range 1.9.2021 - 31.10.2021 (for demo purposes), after which it sends a POST request to the custom API to store that data.
@@ -59,7 +77,7 @@ At the end it fetches the data that was previously stored in the two supported f
 Navigate to the root of the project and execute the following command to build and run a Docker container:
 
 ```
-docker-compose up --build
+docker-compose up
 ```
 
 This should automatically build and run a Docker container called "fastapi-project-container" and the FastAPI API will automatically start to run.
@@ -71,7 +89,7 @@ http://127.0.0.1:8000
 
 You can then run the app/etl/main.py script by running the command:
 ```
-python app/etl/main.py
+python3 app/etl/main.py
 ```
 
 This script will populate the SQLite database with some historical data for "BTC-USD" by communicating with the API.
@@ -80,7 +98,7 @@ This script will populate the SQLite database with some historical data for "BTC
 
 The pytest testing framework was used. The unit tests can be executed by navigating to the root of the project and using the following commands:
 ```
-python -m pytest app/
+python3 -m pytest -vvv
 ```
 
 ## Built With
